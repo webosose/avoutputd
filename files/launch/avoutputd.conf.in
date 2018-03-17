@@ -1,0 +1,23 @@
+# @@@LICENSE
+#
+#      Copyright (c) 2016-17 LG Electronics, Inc.
+#
+# Confidential computer software. Valid license from LG required for
+# possession, use or copying. Consistent with FAR 12.211 and 12.212,
+# Commercial Computer Software, Computer Software Documentation, and
+# Technical Data for Commercial Items are licensed to the U.S. Government
+# under vendor's standard commercial license.
+#
+# LICENSE@@@
+
+description "@WEBOS_PROJECT_SUMMARY@"
+
+
+start on @START_ON_SIGNAL@
+
+respawn
+
+# Comment this line out to suppress logs on the console
+#console output
+
+exec @WEBOS_INSTALL_SBINDIR@/avoutputd

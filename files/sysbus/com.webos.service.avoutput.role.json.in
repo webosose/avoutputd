@@ -1,0 +1,13 @@
+{
+    "exeName":"@WEBOS_INSTALL_SBINDIR@/avoutputd",
+    "type": "regular",
+    "allowedNames": ["com.webos.service.avoutput"],
+    "permissions": [
+        {
+            "service":"com.webos.service.avoutput",
+            "outbound":[
+                "com.webos.service.settings"
+            ]
+        }
+    ]
+}

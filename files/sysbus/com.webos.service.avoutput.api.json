@@ -1,0 +1,85 @@
+{
+  "media": [
+    "com.webos.service.avoutput/video/connect",
+    "com.webos.service.avoutput/video/disconnect",
+    "com.webos.service.avoutput/video/getStatus",
+    "com.webos.service.avoutput/video/blankVideo",
+    "com.webos.service.avoutput/video/setMediaData",
+    "com.webos.service.avoutput/video/display/getVideoLimits",
+    "com.webos.service.avoutput/video/display/getOutputCapabilities",
+    "com.webos.service.avoutput/video/display/setDisplayWindow",
+    "com.webos.service.avoutput/video/display/setCompositing",
+    "com.webos.service.avoutput/video/display/setDisplayResolution",
+    "com.webos.service.avoutput/video/display/getSupportedResolution",
+
+    "com.webos.service.avoutput/audio/connect",
+    "com.webos.service.avoutput/audio/disconnect",
+    "com.webos.service.avoutput/audio/getStatus",
+    "com.webos.service.avoutput/audio/mute",
+    "com.webos.service.avoutput/audio/volume/up",
+    "com.webos.service.avoutput/audio/volume/down",
+    "com.webos.service.avoutput/audio/volume/set",
+    "com.webos.service.avoutput/audio/volume/muteSpeaker",
+    "com.webos.service.avoutput/audio/volume/getStatus",
+
+    "com.webos.service.avoutput/audio/spdif/setMode",
+
+    "com.webos.service.avoutput/systemproperty/getProperties"
+  ],
+
+  "public": [
+    "com.webos.service.avoutput/video/connect",
+    "com.webos.service.avoutput/video/disconnect",
+    "com.webos.service.avoutput/video/getStatus",
+    "com.webos.service.avoutput/video/blankVideo",
+    "com.webos.service.avoutput/video/setMediaData",
+    "com.webos.service.avoutput/video/display/getVideoLimits",
+    "com.webos.service.avoutput/video/display/getOutputCapabilities",
+    "com.webos.service.avoutput/video/display/setDisplayWindow",
+    "com.webos.service.avoutput/video/display/setCompositing",
+    "com.webos.service.avoutput/video/display/setDisplayResolution",
+    "com.webos.service.avoutput/video/display/getSupportedResolution",
+
+    "com.webos.service.avoutput/audio/connect",
+    "com.webos.service.avoutput/audio/disconnect",
+    "com.webos.service.avoutput/audio/getStatus",
+    "com.webos.service.avoutput/audio/mute",
+    "com.webos.service.avoutput/audio/volume/up",
+    "com.webos.service.avoutput/audio/volume/down",
+    "com.webos.service.avoutput/audio/volume/set",
+    "com.webos.service.avoutput/audio/volume/muteSpeaker",
+    "com.webos.service.avoutput/audio/volume/getStatus",
+
+    "com.webos.service.avoutput/audio/spdif/setMode",
+
+    "com.webos.service.avoutput/systemproperty/getProperties"
+  ],
+
+  "private": [
+    "com.webos.service.avoutput/video/connect",
+    "com.webos.service.avoutput/video/disconnect",
+    "com.webos.service.avoutput/video/getStatus",
+    "com.webos.service.avoutput/video/blankVideo",
+    "com.webos.service.avoutput/video/setMediaData",
+    "com.webos.service.avoutput/video/display/getVideoLimits",
+    "com.webos.service.avoutput/video/display/getOutputCapabilities",
+    "com.webos.service.avoutput/video/display/setDisplayWindow",
+    "com.webos.service.avoutput/video/display/setCompositing",
+    "com.webos.service.avoutput/video/display/setDisplayResolution",
+    "com.webos.service.avoutput/video/display/getSupportedResolution",
+
+    "com.webos.service.avoutput/audio/connect",
+    "com.webos.service.avoutput/audio/disconnect",
+    "com.webos.service.avoutput/audio/getStatus",
+    "com.webos.service.avoutput/audio/mute",
+    "com.webos.service.avoutput/audio/volume/up",
+    "com.webos.service.avoutput/audio/volume/down",
+    "com.webos.service.avoutput/audio/volume/set",
+    "com.webos.service.avoutput/audio/volume/muteSpeaker",
+    "com.webos.service.avoutput/audio/volume/getStatus",
+
+    "com.webos.service.avoutput/audio/spdif/setMode",
+
+    "com.webos.service.avoutput/systemproperty/getProperties"
+  ]
+}
