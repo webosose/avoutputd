@@ -1,14 +1,18 @@
-// @@@LICENSE
+// Copyright (c) 2016-2018 LG Electronics, Inc.
 //
-//      Copyright (c) 2016-17 LG Electronics, Inc.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
 //
-// Confidential computer software. Valid license from LG required for
-// possession, use or copying. Consistent with FAR 12.211 and 12.212,
-// Commercial Computer Software, Computer Software Documentation, and
-// Technical Data for Commercial Items are licensed to the U.S. Government
-// under vendor's standard commercial license.
+// http://www.apache.org/licenses/LICENSE-2.0
 //
-// LICENSE@@@
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+// SPDX-License-Identifier: Apache-2.0
 
 #include <string>
 #include <vector>
@@ -29,10 +33,13 @@ VideoService::VideoService(LS::Handle& handle) :
 {
 	std::vector<AVAL_PLANE_T> supportedPlanes = aval->video->getVideoPlanes();
 
+	LOG_DEBUG("supportedPlanes size:%d", supportedPlanes.size());
+
 	//setup the sinks
 	for(uint8_t i=0; i<supportedPlanes.size(); i++)
 	{
 		std::string plane = supportedPlanes[i].planeName;
+		LOG_DEBUG("push to mSink. planes name:%s", plane.c_str());
 
 		if(plane == "MAIN")
 			mSinks.push_back(VideoSink(plane, 0, AVAL_VIDEO_WID_0));
@@ -75,30 +82,20 @@ VideoService::~VideoService()
 pbnjson::JValue VideoService::connect(LSHelpers::JsonRequest& request)
 {
 	std::string videoSource, videoSinkName, purpose, appId("unknown");
-	uint8_t videoSourcePort, videoSinkPort=-1;
+	uint8_t videoSourcePort;
 
 	request.get("appId", appId).optional(true);
 	request.get("source", videoSource);
 	request.get("sourcePort", videoSourcePort);
 	request.get("sink", videoSinkName);
 
-	if (videoSinkName == "MAIN")
-	{
-		request.get("sinkPort", videoSinkPort).optional(true);
-	}
-	else
-	{
-		request.get("sinkPort", videoSinkPort);
-		videoSinkName = videoSinkName + std::to_string(videoSinkPort);
-	}
-
 	if (!request.finishParse())
 	{
 		return API_ERROR_SCHEMA_VALIDATION(request.getError());
 	}
 
-	LOG_DEBUG("Video connect request for source %s, sourcePort %d, sink %s, sinkPort %d",
-	          videoSource.c_str(), videoSourcePort, videoSinkName.c_str(), videoSinkPort);
+	LOG_DEBUG("Video connect request for source %s, sourcePort %d, sinkname %s",
+	          videoSource.c_str(), videoSourcePort, videoSinkName.c_str());
 
 	VideoSink* videoSink = getVideoSink(videoSinkName);
 	AVAL_VSC_INPUT_SRC_INFO_T vscInput;
@@ -131,7 +128,7 @@ pbnjson::JValue VideoService::connect(LSHelpers::JsonRequest& request)
 		return API_ERROR_INVALID_PARAMETERS("Only VDEC and HDMI video source currently supported");
 	}
 
-	if (videoSinkName == "SUB")
+	if (videoSinkName.find("SUB")!=std::string::npos)
 	{
 		this->setDualVideo(true);
 	}
@@ -165,7 +162,7 @@ pbnjson::JValue VideoService::connect(LSHelpers::JsonRequest& request)
 		readHdmiTimingInfo(*videoSink);
 	}*/
 
-	LOG_DEBUG("Video connect success");
+	LOG_DEBUG("Video connect success. planeId:%d", plane);
 	this->sendSinkUpdateToSubscribers();
 
 	return JObject{{"returnValue", true}, {"planeID", (int)plane}};
@@ -247,7 +244,7 @@ pbnjson::JValue VideoService::disconnect(LSHelpers::JsonRequest& request)
 		return API_ERROR_HAL_ERROR;
 	}
 
-	LOG_DEBUG("Video disconnect success");
+	LOG_DEBUG("Video(%s) disconnect success", videoSinkName.c_str());
 	this->sendSinkUpdateToSubscribers();
 	return true;
 }
@@ -299,9 +296,9 @@ pbnjson::JValue VideoService::blankVideo(LSHelpers::JsonRequest& request)
 		return API_ERROR_SCHEMA_VALIDATION(request.getError());
 	}
 
-	LOG_DEBUG("blankVideo request for sink %s, set blank to %d", sinkName.c_str(), enableBlank);
-
 	VideoSink* videoSink = getVideoSink(sinkName);
+
+	LOG_DEBUG("blankVideo request for sink %s, set blank to %d", sinkName.c_str(), enableBlank);
 
 	if (!videoSink)
 	{
@@ -841,6 +838,7 @@ VideoSink* VideoService::getVideoSink(const std::string& sinkName)
 {
 	for(VideoSink& sink : mSinks)
 	{
+		LOG_DEBUG("compare msink name:%s, sinkname:%s", sink.name.c_str(), sinkName.c_str());
 		if(sink.name == sinkName)
 			return &sink;
 	}

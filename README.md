@@ -43,11 +43,11 @@ The directory under which the files are installed defaults to `/usr/local/webos`
 You can install them elsewhere by supplying a value for `WEBOS_INSTALL_ROOT`
 when invoking `cmake`. For example:
 
-    $ cmake -D WEBOS_INSTALL_ROOT:PATH=$HOME/projects/webos-pro ..
+    $ cmake -D WEBOS_INSTALL_ROOT:PATH=$HOME/projects/webosose ..
     $ make
     $ make install
 
-will install the files in subdirectories of `$HOME/projects/webos-pro`.
+will install the files in subdirectories of `$HOME/projects/webosose`.
 
 Specifying `WEBOS_INSTALL_ROOT` also causes `pkg-config` to look in that tree
 first before searching the standard locations. You can specify additional
