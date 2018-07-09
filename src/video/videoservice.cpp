@@ -323,6 +323,17 @@ pbnjson::JValue VideoService::blankVideo(LSHelpers::JsonRequest& request)
 
 pbnjson::JValue VideoService::setMediaData(LSHelpers::JsonRequest& request)
 {
+#if defined(UMS_INTERNAL_API_VERSION2)
+	std::string videoSinkName;
+	double frameRate;
+	uint16_t width;
+	uint16_t height;
+
+	request.get("sink", videoSinkName);
+	request.get("frameRate", frameRate).min(0.0);
+	request.get("width", width);
+	request.get("height", height);
+#else
 	std::string videoSinkName;
 	std::string contentType;
 	double frameRate;
@@ -338,14 +349,20 @@ pbnjson::JValue VideoService::setMediaData(LSHelpers::JsonRequest& request)
 	request.get("height", height);
 	request.get("scanType", scanType).allowedValues({"interlaced", "progressive", "VIDEO_PROGRESSIVE", "VIDEO_INTERLACED"});
 	request.get("adaptive", adaptive);
+#endif
+
 	if (!request.finishParse())
 	{
 		return API_ERROR_SCHEMA_VALIDATION(request.getError());
 	}
 
+#if defined(UMS_INTERNAL_API_VERSION2)
+	LOG_DEBUG("setMediaData called for sink %s, frameRate %f, width %u, height %u",
+	          videoSinkName.c_str(), frameRate, width, height);
+#else
 	LOG_DEBUG("setMediaData called for sink %s with contentType %s, frameRate %f, width %u, height %u, scanType %s, adaptive %d",
 	          videoSinkName.c_str(), contentType.c_str(), frameRate, width, height, scanType.c_str(), adaptive);
-
+#endif
 	VideoSink* videoSink = getVideoSink(videoSinkName);
 
 	if (!videoSink)
@@ -358,8 +375,14 @@ pbnjson::JValue VideoService::setMediaData(LSHelpers::JsonRequest& request)
 		return API_ERROR_VIDEO_NOT_CONNECTED;
 	}
 
+#if defined(UMS_INTERNAL_API_VERSION2)
 	//Just save the frame rect and wait for setDisplayWindow to update output window.
-
+	videoSink->frameRect.w = width;
+	videoSink->frameRect.h = height;
+	videoSink->inputRect = VideoRect(); // Invalidate input rect, need to call setDisplayWindow to set new input rect.
+	videoSink->frameRate = frameRate;
+#else
+	//Just save the frame rect and wait for setDisplayWindow to update output window.
 	videoSink->frameRect.w = width;
 	videoSink->frameRect.h = height;
 	videoSink->inputRect = VideoRect(); // Invalidate input rect, need to call setDisplayWindow to set new input rect.
@@ -369,6 +392,7 @@ pbnjson::JValue VideoService::setMediaData(LSHelpers::JsonRequest& request)
 	                     ScanType::PROGRESSIVE :
 	                     ScanType::INTERLACED;
 	videoSink->contentType = contentType;
+#endif
 
 	if (videoSink->outputRect.isValid() || videoSink->fullScreen)
 	{//only if setDisplayWindow was called earlier apply Video
@@ -650,6 +674,20 @@ pbnjson::JValue VideoService::buildStatus()
 
 pbnjson::JValue VideoService::buildVideoSinkStatus(VideoSink& vsink)
 {
+#if defined(UMS_INTERNAL_API_VERSION2)
+	return JObject{{"sink", vsink.name},
+	               {"connectedSource", vsink.connected ? vsink.sourceName : JValue()}, // Set to null when not connected
+	               {"connectedSourcePort", vsink.connected ? vsink.sourcePort : 0},
+	               {"muted", vsink.muted},
+	               {"frameRate", vsink.frameRate},
+	               {"width", vsink.frameRect.w},
+	               {"height", vsink.frameRect.h},
+	               {"fullScreen", vsink.fullScreen},
+	               {"displayOutput", vsink.outputRect.toJValue()},
+	               {"sourceInput", vsink.realInputRect.toJValue()},
+	               {"opacity", vsink.opacity},
+	               {"zOrder", vsink.zorder}};
+#else
 	return JObject{{"sink", vsink.name},
 	               {"connectedSource", vsink.connected ? vsink.sourceName : JValue()}, // Set to null when not connected
 	               {"connectedSourcePort", vsink.connected ? vsink.sourcePort : 0},
@@ -664,6 +702,7 @@ pbnjson::JValue VideoService::buildVideoSinkStatus(VideoSink& vsink)
 	               {"sourceInput", vsink.realInputRect.toJValue()},
 	               {"opacity", vsink.opacity},
 	               {"zOrder", vsink.zorder}};
+#endif
 }
 
 void VideoService::readVideoCapabilities(VideoSink& context)

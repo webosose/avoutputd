@@ -65,6 +65,7 @@ set(START_ON_SIGNAL "lginit_app-ready and stopped dbus")
 if("${WEBOS_TARGET_MACHINE}" MATCHES "raspberrypi*")
     message(STATUS "Using raspberry machine")
     add_definitions(-DUSE_RPI_RESOURCE)
+    add_definitions(-DUMS_INTERNAL_API_VERSION2)
 endif()
 
 webos_add_linker_options(ALL --no-undefined)

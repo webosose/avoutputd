@@ -28,6 +28,43 @@
 class VideoSink
 {
 public:
+#if defined(UMS_INTERNAL_API_VERSION2)
+	VideoSink(const std::string& _name, uint8_t _zorder, AVAL_VIDEO_WID_T wId):
+			name(_name),
+			sourcePort(0),
+			videoSinkId(wId),
+			connected(false),
+			muted(true),
+			fullScreen(false),
+			frameRate(0.),
+			adaptive(false),
+			opacity(255),
+			zorder(_zorder)
+	{}
+
+	std::string name; // "MAIN", "SUB"
+	std::string sourceName; //TODO: use enum?
+	uint8_t sourcePort;
+	AVAL_VIDEO_WID_T videoSinkId; // 0 = main, 1 = sub
+	bool connected;
+	bool muted;
+
+	VideoRect frameRect; // video frame size, x,y always 0,
+	VideoSize maxUpscaleSize; // max video size on screen if it's bigger than actual size
+	VideoSize minDownscaleSize; // min video size on screen if it's smaller than actual size
+
+	bool fullScreen;
+	double frameRate;
+	VideoRect inputRect; // w=0,h=0 means not set, will use frame rect instead
+	VideoRect outputRect; // before scaling applied
+	VideoRect realInputRect; // real input rect used
+	bool adaptive; //TODO: adaptive variable is not used aval-rpi.
+
+	//Zorder related things.
+	uint8_t opacity;
+	uint8_t zorder;
+};
+#else
 	VideoSink(const std::string& _name, uint8_t _zorder, AVAL_VIDEO_WID_T wId):
 			name(_name),
 			sourcePort(0),
@@ -65,6 +102,7 @@ public:
 	uint8_t opacity;
 	uint8_t zorder;
 };
+#endif
 
 class VideoService
 {
@@ -132,7 +170,7 @@ private:
 	LSHelpers::SubscriptionPoint mSinkStatusSubscription;
 
 	bool mDualVideoEnabled;
-	
+
 	AspectRatioControl mAspectRatioControl;
 
 	typedef std::function<void(std::string&)> AppIDChangeSettingsCallback;
